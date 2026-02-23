@@ -11,6 +11,18 @@ export default class TicketService {
     }
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
+
+    #validateAccount(accountId) {
+        if (!Number.isInteger(accountId) || accountId <= 0) {
+            throw new InvalidPurchaseException("Invalid accountId");
+        }
     }
+
+    #validateRequests(ticketTypeRequests) {
+        if (!ticketTypeRequests || ticketTypeRequests.length === 0) {
+            throw new InvalidPurchaseException("No tickets requested");
+        }
+    }
+
   }
 }
