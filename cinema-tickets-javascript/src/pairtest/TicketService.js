@@ -16,7 +16,7 @@ export default class TicketService {
         this.#seatReservationService = new SeatReservationService();
     }
 
-  purchaseTickets(accountId, ...ticketTypeRequests) {
+    purchaseTickets(accountId, ...ticketTypeRequests) {
         // Check if account id > 0
         this.#validateAccount(accountId);
 
@@ -118,5 +118,5 @@ export default class TicketService {
 
     #calculateSeats(adultCount, childCount) {
         return adultCount + childCount;
-  }
+    }
 }
