@@ -1,12 +1,16 @@
-import TicketTypeRequest from './lib/TicketTypeRequest.js';
-import InvalidPurchaseException from './lib/InvalidPurchaseException.js';
+import TicketPaymentService from "../thirdparty/TicketPaymentService.js";
+import SeatReservationService from "../thirdparty/SeatReservationService.js";
 
 export default class TicketService {
-  /**
-   * Should only have private methods other than the one below.
-   */
+    #paymentService;
+    #seatReservationService;
+
+    constructor() {
+        this.#paymentService = new TicketPaymentService();
+        this.#seatReservationService = new SeatReservationService();
+    }
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
-    // throws InvalidPurchaseException
+    }
   }
 }
