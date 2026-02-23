@@ -1,7 +1,7 @@
 import TicketTypeRequest from "./lib/TicketTypeRequest.js";
 import InvalidPurchaseException from "./lib/InvalidPurchaseException.js";
-import TicketPaymentService from "../thirdparty/TicketPaymentService.js";
-import SeatReservationService from "../thirdparty/SeatReservationService.js";
+import TicketPaymentService from "../thirdparty/paymentgateway/TicketPaymentService.js";
+import SeatReservationService from "../thirdparty/seatbooking/SeatReservationService.js";
 
 const MAX_TICKET_COUNT = 25;
 const ADULT_TICKET_PRICE = 25;
@@ -11,9 +11,10 @@ export default class TicketService {
     #paymentService;
     #seatReservationService;
 
-    constructor() {
-        this.#paymentService = new TicketPaymentService();
-        this.#seatReservationService = new SeatReservationService();
+    constructor(paymentService, seatReservationService) {
+        this.#paymentService = paymentService ?? new TicketPaymentService();
+        this.#seatReservationService =
+            seatReservationService ?? new SeatReservationService();
     }
 
     purchaseTickets(accountId, ...ticketTypeRequests) {
