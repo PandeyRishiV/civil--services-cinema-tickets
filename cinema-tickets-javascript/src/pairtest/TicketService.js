@@ -61,5 +61,36 @@ export default class TicketService {
             { adultCount: 0, childCount: 0, infantCount: 0 },
         );
     }
+
+    #validateBusinessRules(adultCount, childCount, infantCount) {
+        const totalTickets = adultCount + childCount + infantCount;
+
+        if (totalTickets > MAX_TICKET_COUNT) {
+            throw new InvalidPurchaseException(
+                "Cannot purchase more than 25 tickets",
+            );
+        }
+
+        if ((childCount > 0 || infantCount > 0) && adultCount === 0) {
+            throw new InvalidPurchaseException(
+                "Child and Infant tickets require at least one Adult ticket",
+            );
+        }
+
+        if (infantCount > adultCount) {
+            throw new InvalidPurchaseException(
+                "Each Infant must be accompanied by one Adult",
+            );
+        }
+    }
+
+    #calculateAmount(adultCount, childCount) {
+        return (
+            adultCount * ADULT_TICKET_PRICE + childCount * CHILD_TICKET_PRICE
+        );
+    }
+
+    #calculateSeats(adultCount, childCount) {
+        return adultCount + childCount;
   }
 }
