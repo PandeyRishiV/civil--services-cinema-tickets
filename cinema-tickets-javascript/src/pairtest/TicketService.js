@@ -1,5 +1,11 @@
+import TicketTypeRequest from "./lib/TicketTypeRequest.js";
+import InvalidPurchaseException from "./lib/InvalidPurchaseException.js";
 import TicketPaymentService from "../thirdparty/TicketPaymentService.js";
 import SeatReservationService from "../thirdparty/SeatReservationService.js";
+
+const MAX_TICKET_COUNT = 25;
+const ADULT_TICKET_PRICE = 25;
+const CHILD_TICKET_PRICE = 15;
 
 export default class TicketService {
     #paymentService;
@@ -11,6 +17,26 @@ export default class TicketService {
     }
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
+        // Check if account id > 0
+        this.#validateAccount(accountId);
+
+        // Check if ticket types and length are valid
+        this.#validateRequests(ticketTypeRequests);
+
+        // Get count for each type of ticket
+        const { adultCount, childCount, infantCount } =
+            this.#aggregateTickets(ticketTypeRequests);
+
+        // Check for further invalid cases
+        this.#validateBusinessRules(adultCount, childCount, infantCount);
+
+        // Calculate total amount and seats (infant excluded)
+        const totalAmount = this.#calculateAmount(adultCount, childCount);
+        const totalSeats = this.#calculateSeats(adultCount, childCount);
+
+        this.#paymentService.makePayment(accountId, totalAmount);
+        this.#seatReservationService.reserveSeat(accountId, totalSeats);
+    }
 
     #validateAccount(accountId) {
         if (!Number.isInteger(accountId) || accountId <= 0) {
