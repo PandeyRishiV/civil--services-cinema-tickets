@@ -28,11 +28,11 @@ export default class TicketService {
         this.#validateBusinessRules(ticketCounts)
 
         // Calculate total amount and seats (infant excluded)
-        const totalAmount = this.#calculateAmount(adultCount, childCount);
-        const totalSeats = this.#calculateSeats(adultCount, childCount);
+        const totalAmount = this.#calculateAmount(ticketCounts)
+        const totalSeats = this.#calculateSeats(ticketCounts)
 
-        this.#paymentService.makePayment(accountId, totalAmount);
-        this.#seatReservationService.reserveSeat(accountId, totalSeats);
+        this.#paymentService.makePayment(accountId, totalAmount)
+        this.#seatReservationService.reserveSeat(accountId, totalSeats)
     }
 
     #validateAccount(accountId) {
@@ -103,13 +103,17 @@ export default class TicketService {
         }
     }
 
-    #calculateAmount(adultCount, childCount) {
-        return (
-            adultCount * ADULT_TICKET_PRICE + childCount * CHILD_TICKET_PRICE
-        );
+    #calculateAmount(ticketCounts) {
+        return Object.values(TicketType).reduce((total, ticket) => {
+            const count = ticketCounts[ticket.type] ?? 0
+            return total + count * ticket.price
+        }, 0)
     }
 
-    #calculateSeats(adultCount, childCount) {
-        return adultCount + childCount;
+    #calculateSeats(ticketCounts) {
+        return Object.values(TicketType).reduce((total, ticketDef) => {
+            const count = ticketCounts[ticketDef.type] ?? 0
+            return ticketDef.requiresSeat ? total + count : total
+        }, 0)
     }
 }
