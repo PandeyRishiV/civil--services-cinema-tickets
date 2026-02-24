@@ -1,3 +1,4 @@
+import TicketType from './TicketType.js';
 /**
  * Immutable Object.
  */
@@ -27,6 +28,6 @@ export default class TicketTypeRequest {
   getTicketType() {
     return this.#type;
   }
-
-  #Type = ['ADULT', 'CHILD', 'INFANT'];
+  
+  #Type = Object.values(TicketType).map(t => t.type);
 }
