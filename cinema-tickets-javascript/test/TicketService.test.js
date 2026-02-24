@@ -11,4 +11,24 @@ describe("TicketService", () => {
 
         ticketService = new TicketService(paymentMock, reservationMock);
     });
+
+    test("successfully purchases tickets", () => {
+        ticketService.purchaseTickets(
+            1,
+            new TicketTypeRequest("ADULT", 2),
+            new TicketTypeRequest("CHILD", 1),
+            new TicketTypeRequest("INFANT", 1),
+        );
+
+        expect(paymentMock.makePayment).toHaveBeenCalledWith(1, 65);
+        expect(reservationMock.reserveSeat).toHaveBeenCalledWith(1, 3);
+    });
+
+    test("rejects invalid account id", () => {
+        expect(() =>
+            ticketService.purchaseTickets(0, new TicketTypeRequest("ADULT", 1)),
+        ).toThrow(InvalidPurchaseException);
+
+        expect(paymentMock.makePayment).not.toHaveBeenCalled();
+    });
     });
