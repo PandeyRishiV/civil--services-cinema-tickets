@@ -47,4 +47,28 @@ describe("TicketService", () => {
         ).toThrow(InvalidPurchaseException);
     });
 
+    test("rejects more than 25 tickets", () => {
+        expect(() =>
+            ticketService.purchaseTickets(
+                1,
+                new TicketTypeRequest("ADULT", 26),
+            ),
+        ).toThrow(InvalidPurchaseException);
+    });
+
+    test("rejects more infants than adults", () => {
+        expect(() =>
+            ticketService.purchaseTickets(
+                1,
+                new TicketTypeRequest("ADULT", 1),
+                new TicketTypeRequest("INFANT", 2),
+            ),
+        ).toThrow(InvalidPurchaseException);
+    });
+
+    test("rejects empty request", () => {
+        expect(() => ticketService.purchaseTickets(1)).toThrow(
+            InvalidPurchaseException,
+        );
+    });
     });
