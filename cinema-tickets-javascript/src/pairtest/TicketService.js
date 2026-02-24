@@ -59,11 +59,11 @@ export default class TicketService {
             const type = request.getTicketType()
             const count = request.getNoOfTickets()
 
-                if (count <= 0) {
-                    throw new InvalidPurchaseException(
+            if (count <= 0) {
+                throw new InvalidPurchaseException(
                     'Ticket count must be greater than zero',
                 )
-                }
+            }
 
             if (!(type in ticketCounts)) {
                 throw new InvalidPurchaseException('Unknown ticket type')
