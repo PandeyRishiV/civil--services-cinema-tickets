@@ -1,7 +1,7 @@
+import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 import TicketService from "../src/pairtest/TicketService.js";
-import TicketTypeRequest from "../src/pairtest/lib/TicketTypeRequest.js";
 import InvalidPurchaseException from "../src/pairtest/lib/InvalidPurchaseException.js";
-import { jest, describe, test, expect, beforeEach } from "@jest/globals";
+import TicketTypeRequest from "../src/pairtest/lib/TicketTypeRequest.js";
 
 describe("TicketService", () => {
     let ticketService;
@@ -73,5 +73,17 @@ describe("TicketService", () => {
         expect(() => ticketService.purchaseTickets(1)).toThrow(
             InvalidPurchaseException,
         );
+    });
+
+    test("does not call external services when purchase is invalid", () => {
+        expect(() =>
+            ticketService.purchaseTickets(
+                1,
+                new TicketTypeRequest("INFANT", 1),
+            ),
+        ).toThrow(InvalidPurchaseException);
+
+        expect(paymentMock.makePayment).not.toHaveBeenCalled();
+        expect(reservationMock.reserveSeat).not.toHaveBeenCalled();
     });
 });
