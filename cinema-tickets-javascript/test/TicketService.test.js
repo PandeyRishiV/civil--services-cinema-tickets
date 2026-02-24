@@ -31,4 +31,20 @@ describe("TicketService", () => {
 
         expect(paymentMock.makePayment).not.toHaveBeenCalled();
     });
+
+    test("rejects purchase without adult when child present", () => {
+        expect(() =>
+            ticketService.purchaseTickets(1, new TicketTypeRequest("CHILD", 1)),
+        ).toThrow(InvalidPurchaseException);
+    });
+
+    test("rejects purchase without adult when infant present", () => {
+        expect(() =>
+            ticketService.purchaseTickets(
+                1,
+                new TicketTypeRequest("INFANT", 1),
+            ),
+        ).toThrow(InvalidPurchaseException);
+    });
+
     });
