@@ -1,5 +1,8 @@
 import TicketService from "../src/pairtest/TicketService.js";
 import TicketTypeRequest from "../src/pairtest/lib/TicketTypeRequest.js";
+import InvalidPurchaseException from "../src/pairtest/lib/InvalidPurchaseException.js";
+import { jest, describe, test, expect, beforeEach } from "@jest/globals";
+
 describe("TicketService", () => {
     let ticketService;
     let paymentMock;
@@ -71,4 +74,4 @@ describe("TicketService", () => {
             InvalidPurchaseException,
         );
     });
-    });
+});
