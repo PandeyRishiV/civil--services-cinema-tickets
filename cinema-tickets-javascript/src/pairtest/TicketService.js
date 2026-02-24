@@ -49,41 +49,30 @@ export default class TicketService {
     }
 
     #aggregateTickets(ticketTypeRequests) {
-        let adultCount = 0;
-        let childCount = 0;
-        let infantCount = 0;
+        const ticketCounts = {}
 
-        return ticketTypeRequests.reduce(
-            (acc, request) => {
-                const type = request.getTicketType();
-                const count = request.getNoOfTickets();
+        for (const ticket of Object.values(TicketType)) {
+            ticketCounts[ticket.type] = 0
+        }
+
+        for (const request of ticketTypeRequests) {
+            const type = request.getTicketType()
+            const count = request.getNoOfTickets()
 
                 if (count <= 0) {
                     throw new InvalidPurchaseException(
-                        "Ticket count must be greater than zero",
-                    );
+                    'Ticket count must be greater than zero',
+                )
                 }
 
-                switch (type) {
-                    case "ADULT":
-                        acc.adultCount += count;
-                        break;
-                    case "CHILD":
-                        acc.childCount += count;
-                        break;
-                    case "INFANT":
-                        acc.infantCount += count;
-                        break;
-                    default:
-                        throw new InvalidPurchaseException(
-                            "Unknown ticket type",
-                        );
-                }
+            if (!(type in ticketCounts)) {
+                throw new InvalidPurchaseException('Unknown ticket type')
+            }
 
-                return acc;
-            },
-            { adultCount: 0, childCount: 0, infantCount: 0 },
-        );
+            ticketCounts[type] += count
+        }
+
+        return ticketCounts
     }
 
     #validateBusinessRules(adultCount, childCount, infantCount) {
