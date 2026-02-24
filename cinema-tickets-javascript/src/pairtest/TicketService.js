@@ -22,11 +22,10 @@ export default class TicketService {
         this.#validateRequests(ticketTypeRequests)
 
         // Get count for each type of ticket
-        const { adultCount, childCount, infantCount } =
-            this.#aggregateTickets(ticketTypeRequests);
+        const ticketCounts = this.#aggregateTickets(ticketTypeRequests)
 
         // Check for further invalid cases
-        this.#validateBusinessRules(adultCount, childCount, infantCount);
+        this.#validateBusinessRules(ticketCounts)
 
         // Calculate total amount and seats (infant excluded)
         const totalAmount = this.#calculateAmount(adultCount, childCount);
@@ -75,25 +74,32 @@ export default class TicketService {
         return ticketCounts
     }
 
-    #validateBusinessRules(adultCount, childCount, infantCount) {
-        const totalTickets = adultCount + childCount + infantCount;
+    #validateBusinessRules(ticketCounts) {
+        const adultCount = ticketCounts[TicketType.ADULT.type]
+        const childCount = ticketCounts[TicketType.CHILD.type]
+        const infantCount = ticketCounts[TicketType.INFANT.type]
+
+        const totalTickets = Object.values(ticketCounts).reduce(
+            (sum, count) => sum + count,
+            0,
+        )
 
         if (totalTickets > MAX_TICKET_COUNT) {
             throw new InvalidPurchaseException(
-                "Cannot purchase more than 25 tickets",
-            );
+                'Cannot purchase more than 25 tickets',
+            )
         }
 
         if ((childCount > 0 || infantCount > 0) && adultCount === 0) {
             throw new InvalidPurchaseException(
-                "Child and Infant tickets require at least one Adult ticket",
-            );
+                `Cannot purchase more than ${MAX_TICKET_COUNT} tickets`,
+            )
         }
 
         if (infantCount > adultCount) {
             throw new InvalidPurchaseException(
-                "Each Infant must be accompanied by one Adult",
-            );
+                'Each Infant must be accompanied by one Adult',
+            )
         }
     }
 
