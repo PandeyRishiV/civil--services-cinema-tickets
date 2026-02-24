@@ -1,28 +1,25 @@
-import TicketTypeRequest from "./lib/TicketTypeRequest.js";
-import InvalidPurchaseException from "./lib/InvalidPurchaseException.js";
-import TicketPaymentService from "../thirdparty/paymentgateway/TicketPaymentService.js";
-import SeatReservationService from "../thirdparty/seatbooking/SeatReservationService.js";
+import TicketPaymentService from '../thirdparty/paymentgateway/TicketPaymentService.js'
+import SeatReservationService from '../thirdparty/seatbooking/SeatReservationService.js'
+import InvalidPurchaseException from './lib/InvalidPurchaseException.js'
 
-const MAX_TICKET_COUNT = 25;
-const ADULT_TICKET_PRICE = 25;
-const CHILD_TICKET_PRICE = 15;
+const MAX_TICKET_COUNT = 25
 
 export default class TicketService {
-    #paymentService;
-    #seatReservationService;
+    #paymentService
+    #seatReservationService
 
     constructor(paymentService, seatReservationService) {
-        this.#paymentService = paymentService ?? new TicketPaymentService();
+        this.#paymentService = paymentService ?? new TicketPaymentService()
         this.#seatReservationService =
-            seatReservationService ?? new SeatReservationService();
+            seatReservationService ?? new SeatReservationService()
     }
 
     purchaseTickets(accountId, ...ticketTypeRequests) {
         // Check if account id > 0
-        this.#validateAccount(accountId);
+        this.#validateAccount(accountId)
 
         // Check if ticket types and length are valid
-        this.#validateRequests(ticketTypeRequests);
+        this.#validateRequests(ticketTypeRequests)
 
         // Get count for each type of ticket
         const { adultCount, childCount, infantCount } =
@@ -41,13 +38,13 @@ export default class TicketService {
 
     #validateAccount(accountId) {
         if (!Number.isInteger(accountId) || accountId <= 0) {
-            throw new InvalidPurchaseException("Invalid accountId");
+            throw new InvalidPurchaseException('Invalid accountId')
         }
     }
 
     #validateRequests(ticketTypeRequests) {
         if (!ticketTypeRequests || ticketTypeRequests.length === 0) {
-            throw new InvalidPurchaseException("No tickets requested");
+            throw new InvalidPurchaseException('No tickets requested')
         }
     }
 
